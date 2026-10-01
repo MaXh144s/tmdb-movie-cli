@@ -1,46 +1,69 @@
 package src;
-public class Main{
+
+import java.util.List;
+
+import com.google.gson.JsonSyntaxException;
+
+public class Main {
     public static void main(String[] args) {
 
-        ConfigLoader cl = new ConfigLoader();
+        List<Movie> results;
 
-        String apiKey = cl.getApiKey();
+        if (args.length == 2 && args[0].toLowerCase().equals("--type")) {
+            String type = args[1].toLowerCase();
 
-        System.out.println("API Key carregada: " + apiKey);
+            try {
+                String title;
+                String json;
 
-        TmdbService ts = new TmdbService(apiKey);
+                String apiKey = ConfigLoader.getApiKey();
+                TmdbService ts = new TmdbService(apiKey);
 
-        
-        if ( args.length == 2 && args[0].equals("--type")){
-            String type = args[1];
-            switch (type) {
-                case "popular":
-                    System.out.println("-> Filmes populares");
-                    System.out.println(ts.mostPopular());
-                    break;
+                switch (type) {
+                    case "popular":
+                        title = "-> Filmes populares";
+                        json = ts.mostPopular();
+                        break;
 
                     case "playing":
-                    System.out.println("-> Filmes em cartaz");
-                    System.out.println(ts.playing()); 
-                    break;
+                        title = "-> Filmes em cartaz";
+                        json = ts.playing();
+                        break;
 
                     case "top":
-                    System.out.println("-> Filmes mais bem avaliados");
-                    System.out.println(ts.top()); 
-                    break;
+                        title = "-> Filmes mais bem avaliados";
+                        json = ts.top();
+                        break;
 
                     case "upcoming":
-                    System.out.println("-> próximos filmes");
-                    System.out.println(ts.upcoming()); 
-                    break;
-            
-                default:
-                    System.out.println("Esse tópico não existe. Tente novamente!");
-                    break;
-            }
+                        title = "-> Próximos filmes";
+                        json = ts.upcoming();
+                        break;
 
+                    default:
+                        System.err.println("Tipo de filme inválido.");
+                        System.exit(1);
+                        return;
+                }
+
+                System.out.println(title);
+
+                results = MovieJsonParser.parseMovies(json);
+                if (!results.isEmpty()) {
+                    MoviePrinter.listMovies(results);
+                } else {
+                    System.out.println("Nenhum filme encontrado.");
+                }
+            } catch (TmdbException e) {
+                System.err.println(e.getMessage());
+                System.exit(1);
+            } catch (JsonSyntaxException e) {
+                System.err.println("Resposta inesperada da API.");
+                System.exit(1);
+            }
         } else {
-            System.out.println("Comando não reconhecido");
+            System.err.println("Comando não reconhecido, use: tmdb-app --type <popular|playing|top|upcoming>");
+            System.exit(1);
         }
     }
 }

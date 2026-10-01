@@ -6,24 +6,25 @@ import java.util.Properties;
 
 public class ConfigLoader {
 
-    public String getApiKey(){
-        try(FileInputStream in = new FileInputStream("config.properties")){
-        Properties props = new Properties();
-        props.load(in);
-        
-        String chave = props.getProperty("TMDB_API_KEY");
-        
-        if (chave == null || chave.isEmpty()){
-            System.out.println("Chave não encontrada ou inexistente.");
+    public static String getApiKey() {
+        try (FileInputStream in = new FileInputStream("config.properties")) {
+            Properties props = new Properties();
+            props.load(in);
+
+            String chave = props.getProperty("TMDB_API_KEY");
+
+            if (chave == null || chave.isBlank()) {
+                throw new TmdbException(
+                        "TMDB_API_KEY não configurada em config.properties.");
+            }
+
+            return chave.trim();
         }
 
-        return chave;
-        } 
-
-        catch (IOException e){
-            System.err.println("Erro ao carregar o arquivo de configurações: " + e.getMessage());
-            return null;
-        } 
+        catch (IOException e) {
+            throw new TmdbException(
+                    "Arquivo config.properties não encontrado. Copie config.example.properties e preencha sua chave.o. ");
+        }
     }
 
 }
