@@ -2,6 +2,8 @@
 
 Ferramenta de linha de comando em Java que consulta a API do [The Movie Database (TMDB)](https://www.themoviedb.org/) e exibe no terminal listas de filmes: populares, em cartaz, mais bem avaliados e próximos lançamentos.
 
+Projeto baseado no desafio [TMDB CLI Tool](https://roadmap.sh/projects/tmdb-cli) do roadmap.sh.
+
 ## Tecnologias
 
 ![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
